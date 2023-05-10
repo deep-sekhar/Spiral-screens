@@ -71,16 +71,16 @@ export default function App() {
 function Scene() {
   const [stream, setStream] = useState(new MediaStream())
 
-  const { url } = useControls({
-    url: {
-      value: films['Sintel'],
-      options: films
-    },
-    'getDisplayMedia (only new-window)': button(async (get) => {
-      const mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true })
-      setStream(mediaStream)
-    })
-  })
+  // const { url } = useControls({
+  //   url: {
+  //     value: films['Sintel'],
+  //     options: films
+  //   },
+  //   'getDisplayMedia (only new-window)': button(async (get) => {
+  //     const mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true })
+  //     setStream(mediaStream)
+  //   })
+  // })
 
 
   return (
@@ -153,7 +153,7 @@ function Ground() {
   const gridConfig = {
     cellSize: 0.5,
     cellThickness: 0.5,
-    cellColor: '#6f6f6f',
+    cellColor: 'white',
     sectionSize: 3,
     sectionThickness: 1,
     sectionColor: '#9d4b4b',
