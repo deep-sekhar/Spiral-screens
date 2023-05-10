@@ -33,8 +33,8 @@ export default function App() {
       controlsRef.current = controls;
 
       // Set constraints
-      // controls.minDistance = 7; // Minimum distance to the target
-      // controls.maxDistance = 7.5; // Maximum distance to the target
+      controls.minDistance = 7; // Minimum distance to the target
+      controls.maxDistance = 7.5; // Maximum distance to the target
 
       // Update the camera position if it goes below the ground
       controls.addEventListener('change', () => {
@@ -155,8 +155,8 @@ function Ground() {
     cellThickness: 0.5,
     cellColor: 'white',
     sectionSize: 3,
-    sectionThickness: 1,
-    sectionColor: '#9d4b4b',
+    sectionThickness: 1.1,
+    sectionColor: 'yellow',
     fadeDistance: 30,
     fadeStrength: 1,
     followCamera: false,
