@@ -9,6 +9,7 @@ export default function CurvedPlane({ width, height, radius, children, ...props 
       <mesh geometry={geometry} receiveShadow castShadow position-z={-heightMax}>
         {children}
       </mesh>
+      <pointLight position={[0, 0, heightMax]} color="#ffffff" intensity={2} />
     </group>
   )
 }

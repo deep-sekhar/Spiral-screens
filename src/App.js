@@ -4,12 +4,18 @@ import { Canvas } from '@react-three/fiber'
 import { useVideoTexture, Grid, Center, AccumulativeShadows, RandomizedLight, Environment, useGLTF, CameraControls } from '@react-three/drei'
 import { useControls, button } from 'leva'
 import CurvedPlane from './CurvedPlane'
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { useRef } from 'react';
 
 const { DEG2RAD } = THREE.MathUtils
 
 // List of films from https://gist.github.com/jsturgis/3b19447b304616f18657
 const films = {
-  Sintel: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+  '1':'./1new.mp4',
+  '2':'./2new.mp4',
+  '3':'./3new.mp4',
+  '4':'./4new.mp4',
+  'Sintel': './1.mp4',
   'Big Buck Bunny': 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
   'Elephant Dream': 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
   'For Bigger Blazes': 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
@@ -17,17 +23,39 @@ const films = {
 }
 
 export default function App() {
+  const controlsRef = useRef();
+
   return (
-    <Canvas shadows camera={{ position: [4, 3, 12], fov: 60 }}>
+    <Canvas shadows camera={{ position: [4, 2.5, 6], fov: 60,target: [0, 1.5, 0] }}
+    onCreated={({ gl, camera }) => {
+      // Add OrbitControls to the camera
+      const controls = new OrbitControls(camera, gl.domElement);
+      controlsRef.current = controls;
+
+      // Set constraints
+      // controls.minDistance = 7; // Minimum distance to the target
+      // controls.maxDistance = 7.5; // Maximum distance to the target
+
+      // Update the camera position if it goes below the ground
+      controls.addEventListener('change', () => {
+        if (camera.position.y < 1) {
+          camera.position.setY(1);
+          camera.updateProjectionMatrix();
+        }
+      }
+      );
+    }}
+    >
       <Scene />
 
       <Ground />
+      {/* <pointLight  position={[5, 5, -10]} intensity={1} color={"#ffffff"} /> */}
       <AccumulativeShadows frames={100} color="#9d4b4b" colorBlend={0.5} alphaTest={0.9} scale={20}>
         <RandomizedLight amount={8} radius={4} position={[5, 5, -10]} />
       </AccumulativeShadows>
 
-      <CameraControls />
-      <Environment preset="city" />
+      {/* <CameraControls /> */}
+      <Environment preset="night" />
     </Canvas>
   )
 }
@@ -54,21 +82,28 @@ function Scene() {
     })
   })
 
+
   return (
     <>
-      <Center top>
+      {/* <Center top>
         <Suzi rotation={[-0.63, 0, 0]} />
-      </Center>
+      </Center> */}
 
       <group rotation-y={DEG2RAD * 40}>
-        <Screen src={url} />
+        <Screen src={films['1']} />
       </group>
-      <group rotation-y={DEG2RAD * 120}>
-        <Screen src={url} />
+      <group rotation-y={DEG2RAD * 130}>
+      <Screen src={films['2']} />
       </group>
-      <group rotation-y={DEG2RAD * 200}>
-        <Screen src={url} />
+      <group rotation-y={DEG2RAD * 220}>
+      <Screen src={films['3']} />
       </group>
+      <group rotation-y={DEG2RAD * 310}>
+      <Screen src={films['4']} />
+      </group>
+      {/* <group rotation-y={DEG2RAD * 310}>
+        <Screen src={url} />
+      </group> */}
 
       {/* <group rotation-y={DEG2RAD * -40}>
         <Screen src={stream} />
@@ -107,7 +142,7 @@ function VideoMaterial({ src, setVideo }) {
 
   setVideo?.(texture.image)
 
-  return <meshStandardMaterial side={THREE.DoubleSide} map={texture} toneMapped={false} transparent opacity={0.9} />
+  return <meshStandardMaterial side={THREE.DoubleSide} map={texture} toneMapped={false} transparent opacity={1} />
 }
 
 //
