@@ -1,4 +1,14 @@
 import * as THREE from 'three'
+// viginnete effect 
+import {
+  EffectComposer,
+  DepthOfField,
+  Bloom,
+  Noise,
+  Vignette
+} from "@react-three/postprocessing";
+
+// ===
 import { forwardRef, useState, Suspense, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { useVideoTexture, Grid, Center, AccumulativeShadows, RandomizedLight, Environment, useGLTF, CameraControls } from '@react-three/drei'
@@ -28,24 +38,24 @@ export default function Spiral() {
   const controlsRef = useRef();
 
   return (
-    <Canvas shadows camera={{ position: [4, 2.5, 6], fov: 60,target: [0, 1.5, 0] }}
+    <Canvas shadows camera={{ position: [4, 2.5, 9], fov: 60,target: [0, 1.5, 0] }}
     onCreated={({ gl, camera }) => {
       // Add OrbitControls to the camera
       const controls = new OrbitControls(camera, gl.domElement);
       controlsRef.current = controls;
 
-      // Set constraints
-      controls.minDistance = 7; // Minimum distance to the target
-      controls.maxDistance = 7.5; // Maximum distance to the target
+      // // Set constraints
+      // controls.minDistance = 7; // Minimum distance to the target
+      // controls.maxDistance = 7.5; // Maximum distance to the target
 
-      // Update the camera position if it goes below the ground
-      controls.addEventListener('change', () => {
-        if (camera.position.y < 1) {
-          camera.position.setY(1);
-          camera.updateProjectionMatrix();
-        }
-      }
-      );
+      // // Update the camera position if it goes below the ground
+      // controls.addEventListener('change', () => {
+      //   if (camera.position.y < 1) {
+      //     camera.position.setY(1);
+      //     camera.updateProjectionMatrix();
+      //   }
+      // }
+      // );
     }}
     >
       <Physics
@@ -69,6 +79,24 @@ export default function Spiral() {
 
       {/* <CameraControls /> */}
       <Environment preset="night" />
+
+      <EffectComposer multisampling={0} disableNormalPass={true}>
+        {/* <DepthOfField
+          focusDistance={0}
+          focalLength={0.02}
+          bokehScale={2}
+          height={480}
+        /> */}
+        <Bloom
+          luminanceThreshold={0}
+          luminanceSmoothing={0.9}
+          height={200}
+          opacity={3}
+        />
+        <Noise opacity={0.025} />
+        <Vignette eskil={false} offset={0.1} darkness={1.1} />
+      </EffectComposer>
+
     </Canvas>
   )
 }
@@ -82,8 +110,10 @@ export default function Spiral() {
 // The <RandomizedLight> component is used to create a light source that is randomized with each frame of the accumulated shadows. This creates the effect of the shadows changing slightly over time, which can add more realism to the scene. The amount prop sets how many randomized light positions to use, and the radius prop sets the radius of the randomized light positions. The position prop sets the initial position of the light source.
 
 function Scene() {
+  // set the video source 
   const [stream, setStream] = useState(new MediaStream())
 
+  // drop down for video source
   // const { url } = useControls({
   //   url: {
   //     value: films['Sintel'],
@@ -95,6 +125,12 @@ function Scene() {
   //   })
   // })
 
+  // viginette
+  // const effectVignette = useMemo(() => new ShaderPass(VignetteShader), []);
+  // effectVignette.enabled = true;
+  // effectVignette.uniforms.offset.value = 0.5;
+  // effectVignette.uniforms.darkness.value = 0.5;
+
 
   return (
     <>
@@ -103,16 +139,16 @@ function Scene() {
       </Center> */}
 
       <group rotation-y={DEG2RAD * 40}>
-        <Screen src={films['1']} />
+        <Screen src={films['1']} col="yellow" />
       </group>
       <group rotation-y={DEG2RAD * 130}>
-      <Screen src={films['2']} />
+      <Screen src={films['2']} col="red"/>
       </group>
       <group rotation-y={DEG2RAD * 220}>
-      <Screen src={films['3']} />
+      <Screen src={films['3']} col="violet"/>
       </group>
       <group rotation-y={DEG2RAD * 310}>
-      <Screen src={films['4']} />
+      <Screen src={films['4']} col="green"/>
       </group>
       {/* <group rotation-y={DEG2RAD * 310}>
         <Screen src={url} />
@@ -121,11 +157,15 @@ function Scene() {
       {/* <group rotation-y={DEG2RAD * -40}>
         <Screen src={stream} />
       </group> */}
+
+      {/* viginette */}
+
+
     </>
   )
 }
 
-function Screen({ src }) {
+function Screen({ src, col }) {
   const [video, setVideo] = useState()
 
   const ratio = 16 / 9
@@ -137,7 +177,7 @@ function Screen({ src }) {
 
   return (
     <Center top position-z={z}>
-      <CurvedPlane width={width} height={width / r} radius={radius}>
+      <CurvedPlane width={width} height={width / r} radius={radius} col={col}>
         <Suspense fallback={<meshStandardMaterial side={THREE.DoubleSide} wireframe />}>
           <VideoMaterial src={src} setVideo={setVideo} />
         </Suspense>
