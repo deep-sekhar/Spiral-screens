@@ -8,6 +8,10 @@ import {
   Vignette
 } from "@react-three/postprocessing";
 
+// character animation 
+import Kick from './Kick'
+import Model from './Char'
+
 // ===
 import { forwardRef, useState, Suspense, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
@@ -58,6 +62,10 @@ export default function Spiral() {
       // );
     }}
     >
+            <Suspense fallback={null}>
+        <Kick />
+        {/* <Model/> */}
+      </Suspense>
       <Physics
         gravity={[0, -9.8, 0]}
         // error limit 
