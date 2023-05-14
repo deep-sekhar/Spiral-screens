@@ -5,7 +5,8 @@ import classes from './App.module.css'
 function App() {
   return (
     <>
-      {/* <div className={classes.bg}> </div> */}
+      <div className={classes.bg}>
+      </div>
       <Spiral/>
     </>
   )
