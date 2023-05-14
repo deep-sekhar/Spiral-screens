@@ -73,8 +73,9 @@ export default function Spiral() {
       <Plane />
       </Physics>
       <AccumulativeShadows frames={100} color="#9d4b4b" colorBlend={0.5} alphaTest={0.9} scale={20}>
-      {/* <pointLight  position={[5, 5, -10]} intensity={1} color={"#ffffff"} /> */}
-        <RandomizedLight amount={8} radius={4} position={[5, 5, -10]} />
+      {/* <ambientLight color="white" intensity={0.07} /> */}
+      <pointLight  position={[0, 5, -0]} intensity={3} color={"#ffffff"} />
+        {/* <RandomizedLight amount={8} radius={4} position={[5, 5, -10]} /> */}
       </AccumulativeShadows>
 
       {/* <CameraControls /> */}
