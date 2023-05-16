@@ -10,13 +10,26 @@ export default function CurvedPlane({ width, height, radius, col, children, ...p
         {children}
       </mesh>
       <ambientLight color="white" intensity={0.07} />
-      <pointLight position={[0, 0, heightMax]} color="white" intensity={0.05} />
+      {/* <pointLight position={[0, 0, heightMax]} color="white" intensity={0.05} />
       <pointLight
         color={col}
-        intensity={12}
+        intensity={7}
         position={[0, 0, 0]}
         distance={5}
         decay={2}
+      /> */}
+      <pointLight position={[0, -heightMax, heightMax * 0.5]} color="white" intensity={0.05} />
+      <pointLight
+        color={col}
+        intensity={7}
+        position={[0, 0, heightMax * 0.5]}
+        distance={5}
+        decay={2}
+        target={[0,0, 6]}
+        // shadow-mapSize-width={1024}
+        // shadow-mapSize-height={1024}
+        // shadow-camera-near={0.1}
+        // shadow-camera-far={100}
       />
     </group>
   )

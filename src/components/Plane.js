@@ -41,7 +41,7 @@ export const Plane = () => {
           rotation-x={-Math.PI * 0.5}
           receiveShadow={true}>
       <circleGeometry args={[200, 20]} />
-      <meshPhongMaterial color={"white"} receiveShadow />
+      <meshPhongMaterial color={"black"} receiveShadow />
     </mesh>
 
     <mesh
@@ -53,9 +53,9 @@ export const Plane = () => {
         <circleGeometry args={[200, 20]} />
         <meshStandardMaterial
           opacity={1}
-          alphaMap={gridMap}
+          // alphaMap={gridMap}
           transparent={true}
-          color={"white"} receiveShadow
+          color={"#bbbbb7"} receiveShadow
         />
     </mesh>
     </>

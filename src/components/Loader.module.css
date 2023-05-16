@@ -1,0 +1,44 @@
+.loader{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: blueviolet;
+}
+
+.bg1, .bg2, .bg3,.bg4{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+  }
+  
+  .bg1:before, .bg2:before, .bg3:before,.bg4:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    /* z-index: -1; */
+  }
+  
+.bg1:before {
+    left: 0;
+    background: linear-gradient(to right, #80807D 5%, #c9c25d 80%, #dde086);
+  }
+.bg2:before {
+    left: 0;
+    background: linear-gradient(to right, rgb(0, 0, 0) 5%, #6B4376 80%, #86648B);
+  }
+.bg3:before {
+    left: 0;
+    background: linear-gradient(to right, rgb(0, 0, 0) 5%, #6B4376 80%, #86648B);
+  }
+.bg4:before {
+    left: 0;
+    background: linear-gradient(to right, rgb(0, 0, 0) 5%, #6B4376 80%, #86648B);
+  }
+  

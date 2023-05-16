@@ -1,13 +1,13 @@
-import React from 'react'
+import { forwardRef, useState, Suspense, useMemo , useEffect} from 'react'
 import Spiral from './components/Spiral'
-import classes from './App.module.css'
+import classes from './components/Loader.module.css'
 
 function App() {
   return (
     <>
-      <div className={classes.bg}>
-      </div>
+  
       <Spiral/>
+
     </>
   )
 }

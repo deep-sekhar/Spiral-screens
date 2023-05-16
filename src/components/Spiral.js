@@ -13,7 +13,7 @@ import Kick from './Kick'
 import Model from './Char'
 
 // ===
-import { forwardRef, useState, Suspense, useMemo } from 'react'
+import { forwardRef, useState, Suspense, useMemo , useEffect} from 'react'
 import { Canvas } from '@react-three/fiber'
 import { useVideoTexture, Grid, Center, AccumulativeShadows, RandomizedLight, Environment, useGLTF, CameraControls } from '@react-three/drei'
 import { useControls, button } from 'leva'
@@ -23,47 +23,73 @@ import { useRef } from 'react';
 import {Plane} from './Plane';
 import { Physics } from "@react-three/cannon";
 
+import classes from './Loader.module.css'
+
 const { DEG2RAD } = THREE.MathUtils
 
 // List of films from https://gist.github.com/jsturgis/3b19447b304616f18657
 const films = {
-  '1':'./1new.mp4',
-  '2':'./2new.mp4',
-  '3':'./3new.mp4',
-  '4':'./4new.mp4',
-  'Sintel': './1.mp4',
-  'Big Buck Bunny': 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-  'Elephant Dream': 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-  'For Bigger Blazes': 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-  'For Bigger Joy Rides': 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4'
+  '1':'./videos/t1.mp4',
+  '2':'./videos/t2.mp4',
+  '3':'./videos/t3.mp4',
+  '4':'./videos/t4.mp4',
 }
+
+const VioletScreen = () => {
+  console.log("VioletScreen");
+  // const [isLoading, setIsLoading] = useState(true);
+
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 2000);
+
+  //   return () => clearTimeout(timeout);
+  // }, []);
+
+  return (
+    <div className={classes.loader}>
+    </div>
+  );
+};
 
 export default function Spiral() {
   const controlsRef = useRef();
 
   return (
-    <Canvas shadows camera={{ position: [4, 2.5, 9], fov: 60,target: [0, 1.5, 0] }}
+    <>
+    <div className={classes.bg1}> </div>
+    <Canvas shadows camera={{ position: [4, 2.2, 6.5], fov: 60,target: [0, 2.2, 0] }}
     onCreated={({ gl, camera }) => {
       // Add OrbitControls to the camera
       const controls = new OrbitControls(camera, gl.domElement);
       controlsRef.current = controls;
 
-      // // Set constraints
-      // controls.minDistance = 7; // Minimum distance to the target
-      // controls.maxDistance = 7.5; // Maximum distance to the target
+      // Set constraints
+      controls.minDistance = 7.6; // Minimum distance to the target
+      controls.maxDistance = 7.9 // Maximum distance to the target
+
+      // var controls = new THREE.OrbitControls(camera);
+      controls.enablePan = false;
+      controls.enableZoom = false; 
+      controls.enableDamping = true;
+      // controls.minPolarAngle = 0.8;
+      // controls.maxPolarAngle = 2.4;
+      controls.dampingFactor = 0.05;
+      controls.rotateSpeed = 0.4;
 
       // // Update the camera position if it goes below the ground
-      // controls.addEventListener('change', () => {
-      //   if (camera.position.y < 1) {
-      //     camera.position.setY(1);
-      //     camera.updateProjectionMatrix();
-      //   }
-      // }
-      // );
+      controls.addEventListener('change', () => {
+        if (camera.position.y < 2.2 || camera.position.y > 2.2) {
+          camera.position.setY(2.2);
+          // camera.updateProjectionMatrix();
+        }
+      }
+      );
     }}
     >
-            <Suspense fallback={null}>
-        <Kick />
+    <Suspense fallback={null}>
+        {/* <Kick /> */}
         {/* <Model/> */}
       </Suspense>
       <Physics
@@ -81,21 +107,20 @@ export default function Spiral() {
       <Plane />
       </Physics>
       <AccumulativeShadows frames={100} color="#9d4b4b" colorBlend={0.5} alphaTest={0.9} scale={20}>
-      {/* <ambientLight color="white" intensity={0.07} /> */}
-      <pointLight  position={[0, 5, -0]} intensity={3} color={"#ffffff"} />
-        {/* <RandomizedLight amount={8} radius={4} position={[5, 5, -10]} /> */}
+      <ambientLight color="white" intensity={0.07} />
+      {/* <pointLight  position={[0, 5, -0]} intensity={3} color={"#ffffff"} /> */}
+        <RandomizedLight amount={8} radius={4} position={[5, 5, -10]} />
       </AccumulativeShadows>
 
-      {/* <CameraControls /> */}
       <Environment preset="night" />
 
-      <EffectComposer multisampling={0} disableNormalPass={true}>
-        {/* <DepthOfField
+      {/* <EffectComposer multisampling={0} disableNormalPass={true}>
+        <DepthOfField
           focusDistance={0}
           focalLength={0.02}
           bokehScale={2}
           height={480}
-        /> */}
+        />
         <Bloom
           luminanceThreshold={0}
           luminanceSmoothing={0.9}
@@ -103,10 +128,11 @@ export default function Spiral() {
           opacity={3}
         />
         <Noise opacity={0.025} />
-        <Vignette eskil={false} offset={0.1} darkness={1.1} />
-      </EffectComposer>
+        <Vignette eskil={false} offset={0.1} darkness={.9} />
+      </EffectComposer> */}
 
     </Canvas>
+    </>
   )
 }
 
@@ -151,13 +177,13 @@ function Scene() {
         <Screen src={films['1']} col="yellow" />
       </group>
       <group rotation-y={DEG2RAD * 130}>
-      <Screen src={films['2']} col="red"/>
-      </group>
-      <group rotation-y={DEG2RAD * 220}>
       <Screen src={films['3']} col="violet"/>
       </group>
+      <group rotation-y={DEG2RAD * 220}>
+      <Screen src={films['4']} col="rgb(103, 255, 156)"/>
+      </group>
       <group rotation-y={DEG2RAD * 310}>
-      <Screen src={films['4']} col="green"/>
+      <Screen src={films['2']} col="red"/>
       </group>
       {/* <group rotation-y={DEG2RAD * 310}>
         <Screen src={url} />
