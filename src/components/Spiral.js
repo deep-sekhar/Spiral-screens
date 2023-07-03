@@ -1,12 +1,13 @@
 import * as THREE from 'three'
 // viginnete effect 
-import {
-  EffectComposer,
-  DepthOfField,
-  Bloom,
-  Noise,
-  Vignette
-} from "@react-three/postprocessing";
+// version issues --- > 
+// import {
+//   EffectComposer,
+//   DepthOfField,
+//   Bloom,
+//   Noise,
+//   Vignette
+// } from "@react-three/postprocessing";
 
 // character animation 
 import Kick from './Kick'
@@ -35,26 +36,25 @@ const films = {
   '4':'./videos/t4.mp4',
 }
 
-const VioletScreen = () => {
-  console.log("VioletScreen");
-  // const [isLoading, setIsLoading] = useState(true);
-
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     setIsLoading(false);
-  //   }, 2000);
-
-  //   return () => clearTimeout(timeout);
-  // }, []);
-
-  return (
-    <div className={classes.loader}>
-    </div>
-  );
-};
 
 export default function Spiral() {
   const controlsRef = useRef();
+  const [video, setVideo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadedVideos, setLoadedVideos] = useState(0);
+
+  const handleVideoLoad = () => {
+    setLoadedVideos((prevCount) => prevCount + 1);
+  };
+
+  useEffect(() => {
+    console.log("loadedVideos+++++++++++++++++++", loadedVideos);
+    // const timeout = setTimeout(() => {
+    //   setLoading(false);
+    // }, 10);
+
+    // return () => clearTimeout(timeout);
+  }, [loadedVideos]);
 
   return (
     <>
@@ -101,7 +101,7 @@ export default function Spiral() {
         broadphase={"SAP"}
       >
 
-      <Scene />
+      <Scene handleVideoLoad={handleVideoLoad}/>
 
       {/* <Ground /> */}
       <Plane />
@@ -112,7 +112,7 @@ export default function Spiral() {
         <RandomizedLight amount={8} radius={4} position={[5, 5, -10]} />
       </AccumulativeShadows>
 
-      <Environment preset="night" />
+      {/* <Environment preset="night" /> */}
 
       {/* <EffectComposer multisampling={0} disableNormalPass={true}>
         <DepthOfField
@@ -144,7 +144,7 @@ export default function Spiral() {
 
 // The <RandomizedLight> component is used to create a light source that is randomized with each frame of the accumulated shadows. This creates the effect of the shadows changing slightly over time, which can add more realism to the scene. The amount prop sets how many randomized light positions to use, and the radius prop sets the radius of the randomized light positions. The position prop sets the initial position of the light source.
 
-function Scene() {
+function Scene({handleVideoLoad}) {
   // set the video source 
   const [stream, setStream] = useState(new MediaStream())
 
@@ -174,16 +174,16 @@ function Scene() {
       </Center> */}
 
       <group rotation-y={DEG2RAD * 40}>
-        <Screen src={films['1']} col="yellow" />
+        <Screen src={films['1']} col="yellow" handleVideoLoad={handleVideoLoad}/>
       </group>
       <group rotation-y={DEG2RAD * 130}>
-      <Screen src={films['3']} col="violet"/>
+      <Screen src={films['3']} col="violet" handleVideoLoad={handleVideoLoad}/>
       </group>
       <group rotation-y={DEG2RAD * 220}>
-      <Screen src={films['4']} col="rgb(103, 255, 156)"/>
+      <Screen src={films['4']} col="rgb(103, 255, 156)" handleVideoLoad={handleVideoLoad}/>
       </group>
       <group rotation-y={DEG2RAD * 310}>
-      <Screen src={films['2']} col="red"/>
+      <Screen src={films['2']} col="red" handleVideoLoad={handleVideoLoad}/>
       </group>
       {/* <group rotation-y={DEG2RAD * 310}>
         <Screen src={url} />
@@ -200,7 +200,7 @@ function Scene() {
   )
 }
 
-function Screen({ src, col }) {
+function Screen({ src, col, handleVideoLoad}) {
   const [video, setVideo] = useState()
 
   const ratio = 16 / 9
@@ -214,21 +214,36 @@ function Screen({ src, col }) {
     <Center top position-z={z}>
       <CurvedPlane width={width} height={width / r} radius={radius} col={col}>
         <Suspense fallback={<meshStandardMaterial side={THREE.DoubleSide} wireframe />}>
-          <VideoMaterial src={src} setVideo={setVideo} />
+          <VideoMaterial src={src} setVideo={setVideo} handleVideoLoad={handleVideoLoad}/>
         </Suspense>
       </CurvedPlane>
     </Center>
   )
 }
 
-function VideoMaterial({ src, setVideo }) {
+function VideoMaterial({ src, setVideo,handleVideoLoad}) {
+
+  // console.log(src)
+  const a  = ()=>console.log('loaded')
+  // const texture = useVideoTexture(src, undefined, undefined, undefined, a);
   const texture = useVideoTexture(src)
+  // console.log(texture)
+
   texture.wrapS = THREE.RepeatWrapping
   texture.wrapT = THREE.RepeatWrapping
   // texture.repeat.x = -1
   // texture.offset.x = 1
 
-  setVideo?.(texture.image)
+  const handleTextureLoad = () => {
+    setVideo?.(texture.image);
+    console.log(texture.image);
+    a();
+  };
+
+  if (texture.image instanceof HTMLVideoElement) {
+    texture.image.addEventListener('loadeddata', handleTextureLoad);
+  }
+  // texture.addEventListener('load', a)
 
   return <meshStandardMaterial side={THREE.DoubleSide} map={texture} toneMapped={false} transparent opacity={1} />
 }
